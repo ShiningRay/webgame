@@ -1,0 +1,22 @@
+<table id="<%=dom_id(@map)%>" class="map" cellpadding="0" cellspacing="0">
+  <% j=0; @map.matrix.each do |row| %>
+    <tr>
+    <% i=0;row.each do |cell| %>
+      <td id="c-<%=i%>.<%=j%>" style="background-image:url(<%=formatted_tile_path(cell, :png) if cell > 0%>)"><span>  </span></td>
+    <% i+=1;end; j+=1%>
+    </tr>
+  <% end %>
+</table>
+<script type="text/javascript">
+  map = <%=@map.to_json%>;
+  $(function(){
+    $('#test').click(function(){
+      $(document).mousemove(function(e){
+        $('#mouse').css({top:e.pageY,left:e.pageX});
+      });
+    })
+  });
+</script>
+
+<input type="button" value="test" id="test"/>
+<div id="mouse" style="position:absolute">aaaaaaaaaaa </div>

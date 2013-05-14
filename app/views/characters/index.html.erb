@@ -1,0 +1,39 @@
+<h1>Listing characters</h1>
+<% if @characters %>
+<% form_tag :controller => :world, :action => :enter do %>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Level</th>
+  </tr>
+
+  <% for character in @characters %>
+  <tr>
+    <td><input type="radio" name="character_id" value="<%=character.id%>"></td>
+    <td><%=h character.name %></td>
+    <td><%= character.level %></td>
+    <td><%= link_to 'Destroy', character, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+  <% end %>
+</table>
+<%= submit_tag 'Enter World'%>
+<% end %>
+<% else %>
+Please create a character now
+<% end %>
+<br />
+
+<%= link_to 'Create New character', new_character_path %>
+<script type="text/javascript">
+  $(function(){
+    $('tr').click(function(){
+      $(this).children().eq(0).children().eq(0).attr('checked', true);
+    }).mouseover(function(){
+      $(this).css('background-color', '#eee');
+    }).mouseout(function(){
+      $(this).css('background-color', 'transparent');
+    });
+  });
+
+</script>

@@ -1,0 +1,11 @@
+<table>
+  <% for t in @tiles %>
+  <tr>
+    <td><%= image_tag formatted_tile_url(t, :png)%></td>
+    <td><%= link_to t.name, edit_tile_path(t) %></td>
+  </tr>
+  <% end %>
+</table>
+<%= will_paginate @tiles %>
+
+<%= link_to 'new', new_tile_path %>

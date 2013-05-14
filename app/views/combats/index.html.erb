@@ -1,0 +1,20 @@
+<h1>Listing combats</h1>
+
+<table>
+  <tr>
+    <th>Characters</th>
+  </tr>
+
+<% for combat in @combats %>
+  <tr>
+    <td><%=h combat.characters %></td>
+    <td><%= link_to 'Show', combat %></td>
+    <td><%= link_to 'Edit', edit_combat_path(combat) %></td>
+    <td><%= link_to 'Destroy', combat, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New combat', new_combat_path %>

@@ -1,0 +1,12 @@
+<% form_for @tile, :html => {:multipart => true} do |f| %>
+  <%= f.error_messages %>
+  <p><%= f.label :name %><br/><%= f.text_field :name %></p>
+  <p>
+    <b>Upload Image</b><br />
+    <%= f.file_field :image_file %><br />
+    or URL: <%= f.text_field :image_file_url %>
+  </p>
+
+  <p><%= f.submit %></p>
+
+<% end %>

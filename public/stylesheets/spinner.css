@@ -1,0 +1,33 @@
+.floatleft { float: left; }
+.floatright { float: right; }
+/*-----clear floats w/o markup-----*/
+.clearfix:after {
+    content: "."; 
+    display: block; 
+    height: 0; 
+    clear: both; 
+    visibility: hidden; }
+.clearfix {display: inline-block;}
+/* Hides from IE-mac \*/
+/** html .clearfix {height: 1%;}*/
+.clearfix {display: block;}
+/* End hide from IE-mac */
+/*-----end clear floats w/o markup-----*/
+
+.prev_vert, .next_vert { 
+  text-align:center;
+}
+.prev_vert img, .next_vert img, .prev_horz img, .next_horz img {
+  cursor: pointer;
+}
+.prev_vert, .next_vert {
+  height: 15px;
+}
+.prev_vert img, .next_vert img {
+  margin: 5px 0 0 0;
+}
+.prev_horz img, .next_horz img {
+  margin: 0 5px 0 5px;
+}
+
+

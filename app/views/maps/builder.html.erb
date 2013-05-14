@@ -1,0 +1,118 @@
+
+<ul>
+  <% for t in Tile.all %>
+  <li><%=image_tag( formatted_tile_path(t, :png), :alt => t.name, :class => 'tile', :id=>"tile-#{t.id.to_i}") %></li>
+  <% end %>
+</ul>
+<% form_for @map do |f| %>
+  <p><%= f.label :name%><br/><%= f.text_field :name %></p>
+  <p>
+    <%= f.label :width %>
+    <input type="button" id="width-decrement" value="-" />
+    <%=f.text_field :width, :size => 3, :readonly => true%>
+    <input type="button" id="width-increment" value="+" />
+
+    <%= f.label :height %>
+    <input type="button" id="height-decrement" value="-" />
+    <%=f.text_field :height, :size => 3, :readonly => true%>
+    <input type="button" id="height-increment" value="+" />
+  </p>
+<table border="1">
+  <thead>
+  <tr>
+    <th>*</th>
+    <% @map.width.times do |i|%><th><%=i%></th><% end%> </tr>
+  </thead>
+  <tbody>
+  <% @map.height.times do |j| %>
+  <tr id="row-<%=j%>">
+    <th><%=j%></th>
+    <% @map.width.times do |i| %>
+      <td id="cell-<%=i%>.<%=j%>">
+        <%= hidden_field_tag "matrix[#{j}][#{i}]", @map.matrix[j][i] %>
+      </td>
+    <% end %>
+  </tr>
+  <% end %>
+  </tbody>
+</table>
+<%= f.submit %>
+<% end %>
+
+<script type="text/javascript">
+  var currentTile;
+  $(function(){
+    $('img.tile').click(function(){
+      if(currentTile){currentTile.toggleClass('current');}
+      $(this).toggleClass('current');
+      currentTile=$(this);
+    });
+    $('table').click(function(event){
+      var t = event.target;
+      if(currentTile && t.tagName.toUpperCase() == 'TD'){
+        var id=currentTile.attr('id')
+        $(t).css("background-image", 'url(' + currentTile.attr('src') + ')')
+            .attr('title', id);
+            console.debug(id);
+        id = parseInt(id.substr(5));
+        $(t).children('input').val(id);
+      }
+    });
+    $('td > input').each(function(i, e){
+      if(e.value != ''){
+        $(e).parent().css('background-image', 'url('+$('#tile-'+e.value).attr('src')+')');
+      }
+    });
+    $('#width-decrement').click(function(){
+      var w=$('#map_width');
+      var v=parseInt(w.val());
+      if(v>1){
+        v--;
+        $('thead th:last').remove();
+        $('tr').each(function(){
+          $(this).children('td:last').remove();
+        });
+      }
+      w.val(v);
+    });
+    $('#width-increment').click(function(){
+      var w=$('#map_width');
+      var v=parseInt(w.val());
+      $('<th/>').text(v).appendTo('thead > tr');
+      $('tbody > tr').each(function(i, e){
+        $('<td/>')
+          .attr('id', 'cell-'+v+'.'+i)
+          .html('<input type="hidden" value="0" name="matrix['+i+']['+v+']" />')
+          .appendTo(e);
+      });
+
+      w.val(v+1);
+    });
+    $('#height-decrement').click(function(){
+      var hi=$('#map_height');
+      var h=parseInt(hi.val());
+      if(h > 1){
+        h--;
+        $('tbody > tr:last').remove();
+        hi.val(h);
+      }
+    });
+    $('#height-increment').click(function(){
+      var h=$('#map_height');
+      var v=parseInt(h.val());
+      var w=parseInt($('#map_width').val());
+      var tr = $('<tr/>').attr('id', 'row-'+v);
+
+      $('<th/>').text(v).prependTo(tr);
+
+      for(var i=0;i<w;i++){
+        $('<td/>')
+          .attr('id', 'cell-'+i+'.'+v)
+          .html('<input type="hidden" value="0" name="matrix['+v+']['+i+']" />')
+          .appendTo(tr);
+      }
+      tr.appendTo('tbody');
+      h.val(v+1);
+    });
+  });
+</script>

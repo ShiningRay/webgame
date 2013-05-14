@@ -1,0 +1,3 @@
+@tile.operate do |image|
+  image.resize '32x32'
+end

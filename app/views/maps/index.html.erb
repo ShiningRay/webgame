@@ -1,0 +1,14 @@
+<%=link_to 'tiles', tiles_path%>
+
+<table>
+  <% for map in @maps %>
+  <tr>
+    <td><%= link_to map.id, map%></td>
+    <td><%= link_to map.name, map%></td>
+    <td><%= link_to 'Edit', edit_map_path(map)%></td>
+    <td><%= link_to 'Delete', map_path(map), :method => :delete, :confirm => 'Are you sure?'%></td>
+  </tr>
+  <% end %>
+</table>
+
+<%= link_to 'new map', new_map_path %>

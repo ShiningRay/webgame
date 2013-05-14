@@ -1,0 +1,114 @@
+<style type="text/css">
+  #character_info{display:none;position:absolute;background:white}
+  .sprite{border:1px solid #000;position:absolute;background:red;width:32px;height:32px}
+  #hp_slot, #mp_slot{width:100%;height:20px;background:gray;text-align:center;}
+  #mp_slot {color:white}
+  #hp, #mp{width:100%;height:inherit;background:red;position:absolute}
+  #mp {background:blue}
+
+</style>
+<script type="text/javascript">
+  var map_url = "<%=maps_url%>";
+  var character_url = "<%=characters_url%>";
+</script>
+<script type="text/javascript">
+var character, refresh;
+function loadMap(map_id){
+  $('#stage').load(map_url + '/' + map_id + '.html');
+  refresh = setInterval('refreshCharacters('+map_id+')',1000);
+}
+
+function refreshCharacters(map_id){
+  $.getJSON(map_url + '/' + map_id + '/characters.js',
+    function(characters){
+      map.characters=characters;
+      $.each(characters, function(i, c){
+        c=c.character;
+        var e = $('#character_'+c.id);
+        
+        if(e.size()==0){
+          e = $('<div/>').attr({"id":'character_'+c.id, "class":'sprite'}).text(c.id);
+          
+          e.appendTo('#stage');
+        }
+        e.animate({left: c.map_x * 32, top: c.map_y * 32});
+      })
+    });
+}
+var queue = [], x_offset = [0,1,0,-1],y_offset=[-1,0,1,0];
+function move(event){
+  var d=event.data;
+  queue.push(d);
+  character.map_x += x_offset[d];
+  character.map_y += y_offset[d];
+  $('#character_'+character.id).animate({left: character.map_x * 32, top: character.map_y * 32});
+  if(queue.length > 10){
+    $.getJSON('/world/move', {direction: queue.join(' ')} ,function(offset){
+      console.debug(offset);
+    });
+    queue = [];
+  }
+}
+$(function() {
+    $.getJSON('/world/refresh',
+      function(c){
+        if(c['character']){
+          character = c = c.character;
+          loadMap(c.map_id);
+          loadCharacterInfo();
+        }
+      });
+    $('#inventory_button').click(function(){
+      alert('click');
+    });
+    $('#character_button').click(function(){
+      $('#character_info').toggle();
+    });
+    //$('#character_info').dialog();
+    $('#up_button').bind('click', 0, move);
+    $('#right_button').bind('click', 1, move);
+    $('#down_button').bind('click', 2, move);
+    $('#left_button').bind('click', 3, move);
+    $('#stop_button').click(function(){clearInterval(refresh)});
+});
+function loadCharacterInfo(){
+  $('#character_name').text(character.name);
+  $('#hp').css('width', (character.hp/character.hp_max*100)+'%');
+  $('#hp_slot div').text(character.hp + '/' + character.hp_max);
+  $('#mp').css('width', (character.mp/character.mp_max*100)+'%');
+  $('#mp_slot div').text(character.mp + '/' + character.mp_max);
+}
+</script>
+
+<div id="stage">
+  Loading...
+</div>
+<input type="button" id="character_button" value="Character" />
+<input type="button" id="inventory_button" value="Inventory" />
+<input type="button" id="skill_button" value="Skill" />
+<input type="button" id="stop_button" value="Stop" />
+<table>
+  <tr>
+    <td></td>
+    <td><input type="button" id="up_button" value="up" style="width:100%"/></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><input type="button" id="left_button" value="left" /></td>
+    <td></td>
+    <td><input type="button" id="right_button" value="right" /></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><input type="button" id="down_button" value="down" /></td>
+    <td></td>
+  </tr>
+</table>
+<div id="character_info">
+  Name: <span id="character_name"> </span>
+  <div id="hp_slot"><div id="hp"></div><div>?</div></div>
+  <div id="mp_slot"><div id="mp"></div><div>?</div></div>
+</div>
+<div id="inventory">
+  
+</div>

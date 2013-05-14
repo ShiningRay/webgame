@@ -1,0 +1,23 @@
+<p>
+  <b>Name:</b>
+  <%=h @character.name %>
+</p>
+<p>Level: <%= @character.level %></p>
+<p>XP: <%= @character.exp %></p>
+<h4>Skills</h4>
+<ul>
+  <% for s in Skill.all %>
+    <li><%=link_to s.name, s%>: <%=@character.skills[s.id]||0%></li>
+  <% end %>
+</ul>
+
+<h4>Inventory</h4>
+<ul>
+  <% (@character.inventory || {}).each_pair do |item, num|
+    item = Item.find_by_id(item)%>
+    <li><%= link_to item, item%>: <%=num%></li>
+  <% end %>
+</ul>
+
+<%= link_to 'Edit', edit_character_path(@character) %> |
+<%= link_to 'Back', characters_path %>
